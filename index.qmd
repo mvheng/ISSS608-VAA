@@ -4,9 +4,11 @@ author: "Vanessa Heng"
 date: "January 9, 2024"
 ---
 
-Welcome to my **ISSS608 Visual Analytics and Applications** journey.
+Welcome to my 10-week **ISSS608 Visual Analytics and Applications** journey.
 
 On this website, you will find my coursework prepared for this course.
+
+The road is tough but the following quote motivates me!
 
 ***“Everybody, try laughing. Then whatever scares you will go away! ” - Tatsuo Kusakabe***
 
