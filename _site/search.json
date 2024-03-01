@@ -7,13 +7,6 @@
     "text": "Welcome to my ISSS608 Visual Analytics and Applications journey.\nOn this website, you will find my coursework prepared for this course.\n“Everybody, try laughing. Then whatever scares you will go away!” - Tatsuo Kusakabe"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
     "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html",
     "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html",
     "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
@@ -61,5 +54,96 @@
     "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
     "section": "2.4 Correlation between performances of different subjects",
     "text": "2.4 Correlation between performances of different subjects\nLet’s see if there is any correlation between the performance of Maths vs English, Maths vs Science, and English vs Science via scatter plots.\n\nggplot(data=exam_data,\n  aes(x = MATHS,y = ENGLISH)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  # use the same axis range\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\nggplot(data=exam_data,\n  aes(x = MATHS,y = SCIENCE)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\nggplot(data=exam_data,\n  aes(x = ENGLISH, y = SCIENCE)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\n\n\n\n\n\n\n\nObservations\n\n\n\nAll 3 scatter plots show some positive correlation between the performances of the subjects. However, we would need to calculate the correlation coefficients to determine how strong the correlations are."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "",
+    "text": "In this exercise, we are using ggplot2 extensions to create more elegant and effective statistical graphics using ggrepel, ggthemes, hrbrthemes, and patchwork packages."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-launching-the-required-libraries",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-launching-the-required-libraries",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "2.1 Installing and launching the required libraries",
+    "text": "2.1 Installing and launching the required libraries\nThe code below uses p_load() of the Pacman package to check if all the following packages are installed on the laptop. If they are, then they will be launched into R.\n\ntidyverse\nggrepel: an R package provides geoms for ggplot2 to repel overlapping text labels\nggthemes: an R package provides some extra themes, geoms, and scales for ‘ggplot2’.\nhrbrthemes: an R package provides typography-centric themes and theme components for ggplot2.\npatchwork: an R package for preparing composite figures created using ggplot2.\n\n\npacman::p_load(tidyverse, ggrepel,\n               ggthemes, hrbrthemes,\n               patchwork)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-the-data",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "2.2 Importing the data",
+    "text": "2.2 Importing the data\nExam_data consists of year-end examination grades of a cohort of primary 3 students from a local school. It is in the CSV file format.\nThe code chunk below imports exam_data.csv into the R environment by using read_csv() function of the readr package (one of the tidyverse packages).\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\n\n\n\n\n\n\nObservations\n\n\n\n\nThis data is about students’ examination scores for their 3 subjects (English, Maths, and Science) from various classes in Primary 3 from a school.\nThere are 4 categorical variables: ID, CLASS, GENDER, and RACE, and 3 continuous variables: ENGLISH, MATHS, and SCIENCE.\nOut of the 3 subjects, Maths has the higher mean and median score."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "3.1 Working with ggrepel",
+    "text": "3.1 Working with ggrepel\nLet’s replace geom_label() by geom_label_repel().\n\nggplot(data = exam_data, aes(x = MATHS, y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm, size = 0.5) +\n  geom_label_repel(aes(label = ID), \n              fontface = \"bold\") +\n  coord_cartesian(xlim = c(0, 100), \n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths score for Primary 3 students\")\n\n\n\n\n\n\n\n\n\n\nObservation\n\n\n\nThough the plot is neater, the annotation appears only at some data points as many points are overlapped. There is an option to increase max.overlaps."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme-package",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme-package",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "4.1 Working with ggtheme package",
+    "text": "4.1 Working with ggtheme package\nggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.\nCheck out some of the available themes here:\n\nEconomistExcelFewSolarized\n\n\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins = 20, boundary = 100,\n                  color = \"grey25\", fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores (Economist theme)\") +\n  theme_economist()\n\n\n\n\n\n\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins = 20, boundary = 100,\n                  color = \"grey25\", fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores (Excel theme)\") +\n  theme_excel()\n\n\n\n\n\n\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins = 20, boundary = 100,\n                  color = \"grey25\", fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores (Few theme)\") +\n  theme_few()\n\n\n\n\n\n\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins = 20, boundary = 100,\n                  color = \"grey25\", fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores (Solarized theme)\") +\n  theme_solarized()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes-package",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes-package",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "4.2 Working with hrbrthemes package",
+    "text": "4.2 Working with hrbrthemes package\nhrbrthemes package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins=20, boundary = 100,\n                  color=\"grey25\", fill=\"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_ipsum()\n\n\n\n\nThe second goal centers around productivity for a production workflow. This “production workflow” is the context for where the elements of hrbrthemes should be used. Consult this vignette to learn more.\n\nggplot(data = exam_data, aes(x = MATHS)) +\n  geom_histogram(bins=20, boundary = 100,\n                  color=\"grey25\", fill=\"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_ipsum(axis_title_size = 20, \n              base_size = 15, grid = \"Y\")\n\n\n\n\n\n\n\n\n\n\nAttributes in the theme_ipsum() function\n\n\n\n\naxis_title_size is used to increase the font size of the axis title to 20\nbase_size is used to increase the default axis label to 15\ngrid = \"Y\" is used to remove the x-axis grid lines. If set to “X”, y-axis grid lines will be removed."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.1 Creating composite graphics: pathwork methods",
+    "text": "5.1 Creating composite graphics: pathwork methods\nOne ggplot2 extension we are exploring in this section is patchwork.\nThe patchwork package has a very simple syntax where we can create layouts easily."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#combining-two-ggplot2-graphs",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#combining-two-ggplot2-graphs",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.2 Combining two ggplot2 graphs",
+    "text": "5.2 Combining two ggplot2 graphs\nSimply use + to combine 2 plots in a two-column layout!\n\np1 + p2"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#combining-three-ggplot2-graphs",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#combining-three-ggplot2-graphs",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.3 Combining three ggplot2 graphs",
+    "text": "5.3 Combining three ggplot2 graphs\nWe can plot more complex composite by using appropriate operators. For example, the composite figure below is plotted by using:\n\n“|” operator to stack two ggplot2 graphs,\n“/” operator to place the plots beside each other,\n“()” operator to define the sequence of the plotting.\n\n\nLayout 1Layout 2Layout 3\n\n\n\n(p1 / p2) | p3\n\n\n\n\n\n\n\n(p1 | p2) / p3\n\n\n\n\n\n\n\np1 | p2 | p3"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-with-tag",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-with-tag",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.4 Creating a composite figure with tag",
+    "text": "5.4 Creating a composite figure with tag\nIn order to identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.\n\n((p1 / p2) | p3) + \n  plot_annotation(tag_levels = 'I')"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-with-an-insert",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-with-an-insert",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.5 Creating a composite figure with an insert",
+    "text": "5.5 Creating a composite figure with an insert\nWith inset_element() of patchwork, we can place one or several plots or graphic elements freely on top or below another plot.\n\np3 + inset_element(p2,\n  left = 0.02,\n  bottom = 0.7,\n  right = 0.5,\n  top = 1)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-by-using-patchwork-and-ggtheme",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-composite-figure-by-using-patchwork-and-ggtheme",
+    "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
+    "section": "5.6 Creating a composite figure by using patchwork and ggtheme",
+    "text": "5.6 Creating a composite figure by using patchwork and ggtheme\n\nApply theme to all plotsApply theme to a single plot\n\n\n\npatchwork &lt;- (p1 / p2) | p3\npatchwork & theme_economist()\n\n\n\n\n\n\n\n(p1 / p2) | (p3 + theme_economist())"
   }
 ]
