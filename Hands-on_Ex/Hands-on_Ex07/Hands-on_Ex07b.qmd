@@ -1,0 +1,177 @@
+---
+title: "Hands-on Exercise 7b: Visualising Geospatial Point Data"
+author: "Vanessa Heng"
+date: "February 28, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# 1 Overview
+
+Proportional symbol maps (also known as graduate symbol maps) are a class of maps that use the visual variable of size to represent differences in the magnitude of a discrete, abruptly changing phenomenon, e.g. counts of people.
+
+Like choropleth maps, we can create classed or unclassed versions of these maps. The classed ones are known as range-graded or graduated symbols, and the unclassed ones are called proportional symbols, where the area of the symbols is proportional to the values of the attribute being mapped.
+
+In this exercise, we will learn how to create a proportional symbol map showing the number of wins by Singapore Pools’ outlets using an R package called **tmap**.
+
+In this exercise, we will do the following tasks:
+
+-   To import an aspatial data file into R.
+
+-   To convert it into a simple point feature data frame and at the same time, to assign an appropriate projection reference to the newly created simple point feature data frame.
+
+-   To plot interactive proportional symbol maps.
+
+# 2 Getting Started
+
+## 2.1 Installing and loading the packages
+
+For this exercise, the following R packages will be used:
+
+-   [**sf**](https://cran.r-project.org/web/packages/sf/) for handling geospatial data.
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
+
+## 2.2 Data import
+
+The data set used for this hands-on exercise is called *SGPools_svy21*. The data is in CSV file format.
+
+```{r}
+sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+list(sgpools) 
+head(sgpools, 5)
+```
+
+The data consists seven columns. The XCOORD and YCOORD columns are the x-coordinates and y-coordinates of SingPools outlets and branches. They are in [Singapore SVY21 Projected Coordinates System](https://www.sla.gov.sg/sirent/CoordinateSystems.aspx).
+
+::: callout-note
+sgpools data in tibble data frame and not the common R data frame.
+:::
+
+### 2.2.1 Creating a sf data frame from an aspatial data frame
+
+The code chunk below converts sgpools data frame into a simple feature data frame by using `st_as_sf()` of sf packages
+
+```{r}
+sgpools_sf <- st_as_sf(sgpools, 
+                       coords = c("XCOORD", "YCOORD"),
+                       crs= 3414)
+```
+
+::: callout-note
+-   `coords` argument: states the column name of the x-coordinates first then followed by the column name of the y-coordinates.
+
+-   `crs` argument: states the coordinates system in epsg format. EPSG: 3414 is Singapore SVY21 Projected Coordinate System. For other country’s epsg code, we can check out here [epsg.io](https://epsg.io/).
+:::
+
+```{r}
+list(sgpools_sf)
+```
+
+We can see that the data table of sgpools_sf has a new column called geometry.
+
+# 3 Drawing Proportional Symbol Map
+
+To create an interactive proportional symbol map in R, the view mode of tmap will be used.
+
+The code churn below will turn on the interactive mode of tmap.
+
+```{r}
+tmap_mode("view")
+```
+
+::: panel-tabset
+# Interactive point symbol map
+
+The code chunks below are used to create an interactive point symbol map.
+
+```{r}
+tm_shape(sgpools_sf) + 
+  tm_bubbles(col = "red", size = 1, border.col = "black", border.lwd = 1)
+```
+
+# Proportion map
+
+To draw a proportional symbol map, we need to assign a numerical variable to the size visual attribute. The code chunks below show that the variable `Gp1Gp2Winnings` is assigned to size visual attribute.
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = "Gp1Gp2 Winnings",
+           border.col = "black",
+           border.lwd = 1)
+```
+
+# Colour it!
+
+The proportional symbol map can be further improved by using the colour visual attribute. In the code chunks below, `OUTLET_TYPE` variable is used as the colour attribute variable.
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1)
+```
+
+# Facet maps
+
+An impressive and little-know feature of tmap’s view mode is that it also works with faceted plots. The argument sync in `tm_facets()` can be used to produce multiple maps with synchronised zoom and pan settings.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+
+Finally, it is wiser to switch tmap’s Viewer back to plot mode by using the code chunk below.
+
+```{r}
+tmap_mode("plot")
+```
+:::
+
+# **4 Reference**
+
+## **4.1 All about tmap package**
+
+-   [tmap: Thematic Maps in R](https://www.jstatsoft.org/article/view/v084i06)
+
+-   [tmap](https://cran.r-project.org/web/packages/tmap/)
+
+-   [tmap: get started!](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html)
+
+-   [tmap: changes in version 2.0](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-changes-v2.html)
+
+-   [tmap: creating thematic maps in a flexible way (useR!2015)](http://von-tijn.nl/tijn/research/presentations/tmap_user2015.pdf)
+
+-   [Exploring and presenting maps with tmap (useR!2017)](http://von-tijn.nl/tijn/research/presentations/tmap_user2017.pdf)
+
+## **4.2 Geospatial data wrangling**
+
+-   [sf: Simple Features for R](https://cran.r-project.org/web/packages/sf/)
+
+-   [Simple Features for R: StandardizedSupport for Spatial Vector Data](https://journal.r-project.org/archive/2018/RJ-2018-009/RJ-2018-009.pdf)
+
+-   [Reading, Writing and Converting Simple Features](https://cran.r-project.org/web/packages/sf/vignettes/sf2.html)
+
+## **4.3 Data wrangling**
+
+-   [dplyr](https://dplyr.tidyverse.org/)
+
+-   [Tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+
+-   [tidyr: Easily Tidy Data with ‘spread()’ and ‘gather()’ Functions](https://cran.r-project.org/web/packages/tidyr/tidyr.pdf)
