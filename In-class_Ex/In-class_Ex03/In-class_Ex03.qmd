@@ -1,0 +1,27 @@
+---
+title: "In-class Exercise 3: Tableau Hands-on Part 2"
+author: "Vanessa Heng"
+date: "January 27, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+In this exercise, we have some more hands-on on Tableau.
+
+-   The dashboard consists of several charts. One of the charts has a chart in the tooltip. You can view it [here](https://public.tableau.com/app/profile/vanessa.heng/viz/In-class_Exercise03-Dashboard/Dashboard1).
+
+![](images/clipboard-2381277502.png)
+
+-   Create a story to tell the message to the audience. You can view it [here](https://public.tableau.com/app/profile/vanessa.heng/viz/In-class_Exercise03-Story/Story1).
+
+![](images/clipboard-4271125096.png)
+
+-   Making charts interactive with other charts. You can view it [here](https://public.tableau.com/app/profile/vanessa.heng/viz/In-ClassExercise03-MathsvsEnglishScatterplotBoxplot/Dashboard1).
+
+![](images/clipboard-2966911999.png)

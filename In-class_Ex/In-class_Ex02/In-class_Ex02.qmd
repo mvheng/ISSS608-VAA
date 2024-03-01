@@ -1,0 +1,23 @@
+---
+title: "In-class Exercise 2: Tableau Hands-on Part 1"
+author: "Vanessa Heng"
+date: "January 20, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+In this exercise, we have some hands-on on Tableau.
+
+We have learned to plot lines and bar charts together by region and order date.
+
+We used colour mark card to differentiate profit and loss.
+
+![](/images/Tableau1.png)
+
+This visualisation is published in Tableau Public which you can find it [here](https://public.tableau.com/app/profile/vanessa.heng/viz/In-class_Exercise01_17057345854260/MonthlySalesandProfitbyRegion2016-2019).

@@ -7,6 +7,48 @@
     "text": "Welcome to my 10-week ISSS608 Visual Analytics and Applications journey.\nOn this website, you will find my coursework prepared for this course.\nThe road is tough but the following quote motivates me!\n“Everybody, try laughing. Then whatever scares you will go away!” - Tatsuo Kusakabe"
   },
   {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
+    "title": "In-class Exercise 5: Build a Shiny App!",
+    "section": "",
+    "text": "1. Basic of Shiny\nThese are the 3 essential parts of building a Shiny app.\n\nUI interface for us to control the layout, appearance, and type of controls of the app. (This is what users will click or choose)\nServer function for us to build the output display in the forms of plot, text, table, image etc.\nShinyApp is to create to shiny app object.\n\n\n\n\n2. Hands-on Practice\nWe have learned how to create a simple Shiny app that allows users to choose the subject and bins of the histogram to be displayed.\n\nThis app is also published on this website."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
+    "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
+    "title": "In-class Exercise 3: Tableau Hands-on Part 2",
+    "section": "",
+    "text": "In this exercise, we have some more hands-on on Tableau.\n\nThe dashboard consists of several charts. One of the charts has a chart in the tooltip. You can view it here.\n\n\n\nCreate a story to tell the message to the audience. You can view it here.\n\n\n\nMaking charts interactive with other charts. You can view it here."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
+    "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
+    "title": "In-class Exercise 1: Now you see it!",
+    "section": "",
+    "text": "In this In-class exercise, two R packages will be used. They are\n\ntidyverse\nhaven\n\nThe code chunk used is as follows:\n\npacman::p_load(tidyverse, haven)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#loading-r-packages",
+    "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#loading-r-packages",
+    "title": "In-class Exercise 1: Now you see it!",
+    "section": "",
+    "text": "In this In-class exercise, two R packages will be used. They are\n\ntidyverse\nhaven\n\nThe code chunk used is as follows:\n\npacman::p_load(tidyverse, haven)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#importing-pisa-data",
+    "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#importing-pisa-data",
+    "title": "In-class Exercise 1: Now you see it!",
+    "section": "Importing PISA data",
+    "text": "Importing PISA data\nThe code chunk below uses read_sas() of haven to import PISA data into the R environment.\n\nstu_qqq &lt;- read_sas(\"data/cy08msp_stu_qqq.sas7bdat\")\n\nLet’s filter data by Country ID = SGP (Singapore).\n\nstu_qqq_SG &lt;- stu_qqq %&gt;%\n  filter(CNT == \"SGP\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#filtering-and-saving-filtered-data",
+    "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html#filtering-and-saving-filtered-data",
+    "title": "In-class Exercise 1: Now you see it!",
+    "section": "Filtering and saving filtered data",
+    "text": "Filtering and saving filtered data\nLet’s save the filtered data into a file (for future easy loading).\n\nwrite_rds(stu_qqq_SG, \"data/stu_qqq_SG.rds\")\n\nThe following code is to read an RDS file (i.e. the saved filtered (by SG) file).\n\nstu_qqq_SG &lt;- read_rds(\"data/stu_qqq_SG.rds\")"
+  },
+  {
     "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07b.html",
     "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07b.html",
     "title": "Hands-on Exercise 7b: Visualising Geospatial Point Data",
@@ -852,5 +894,75 @@
     "title": "Hands-on Exercise 7c: Analytical Mapping",
     "section": "5.2 Box map",
     "text": "5.2 Box map\nIn essence, a box map is an augmented quartile map, with an additional lower and upper category. When there are lower outliers, then the starting point for the breaks is the minimum value, and the second break is the lower fence. In contrast, when there are no lower outliers, then the starting point for the breaks will be the lower fence, and the second break is the minimum value (there will be no observations that fall in the interval between the lower fence and the minimum value).\n\nggplot(data = NGA_wp,\n       aes(x = \"\",\n           y = wp_nonfunctional)) +\n  geom_boxplot()\n\n\n\n\n\nDisplaying summary statistics on a choropleth map by using the basic principles of boxplot.\nTo create a box map, a custom breaks specification will be used. However, there is a complication. The break points for the box map vary depending on whether lower or upper outliers are present.\n\n\nCreating boxbreaks functionCreating get.var functionRun the functionBoxmap function\n\n\nThe code chunk below is an R function that creating break points for a box map. The return is a vector with 7 break points compute quartile and fences\n\nboxbreaks &lt;- function(v, IQRmult = 1.5) {\n  qv &lt;- unname(quantile(v))\n  iqr &lt;- qv[4] - qv[2]\n  upfence &lt;- qv[4] + IQRmult * iqr\n  lofence &lt;- qv[2] - IQRmult * iqr\n  # initialize break points vector\n  bb &lt;- vector(mode=\"numeric\",length=7)\n  # logic for lower and upper fences\n  if (lofence &lt; qv[1]) {  # no lower outliers\n    bb[1] &lt;- lofence\n    bb[2] &lt;- floor(qv[1])\n  } else {\n    bb[2] &lt;- lofence\n    bb[1] &lt;- qv[1]\n  }\n  if (upfence &gt; qv[5]) { # no upper outliers\n    bb[7] &lt;- upfence\n    bb[6] &lt;- ceiling(qv[5])\n  } else {\n    bb[6] &lt;- upfence\n    bb[7] &lt;- qv[5]\n  }\n  bb[3:5] &lt;- qv[2:4]\n  return(bb)\n}\n\n\n\nThe code chunk below is an R function to extract a variable as a vector out of an sf data frame.\n\nget.var &lt;- function(vname,df) {\n  v &lt;- df[vname] %&gt;% st_set_geometry(NULL)\n  v &lt;- unname(v[,1])\n  return(v)\n}\n\n\n\n\nvar &lt;- get.var(\"wp_nonfunctional\", NGA_wp) \nboxbreaks(var)\n\n[1] -56.5   0.0  14.0  34.0  61.0 131.5 278.0\n\n\n\n\nThe code chunk below is an R function to create a box map.\n\nboxmap &lt;- function(vnam, df, \n                   legtitle = NA,\n                   mtitle = \"Box Map\"){\n  var &lt;- get.var(vnam,df)\n  bb &lt;- boxbreaks(var)\n  tm_shape(df) +\n    tm_polygons() +\n  tm_shape(df) +\n     tm_fill(vnam, title=legtitle,\n             breaks = bb,\n             palette = \"Blues\",\n             labels = c(\"lower outlier\", \n                     \"&lt; 25%\", \n                     \"25% - 50%\", \n                     \"50% - 75%\",\n                     \"&gt; 75%\", \n                     \"upper outlier\"))  +\n  tm_borders() +\n  tm_layout(main.title = mtitle, \n            title.position = c(\"left\",\n                               \"top\"))\n}\n\n\ntmap_mode(\"plot\")\nboxmap(\"wp_nonfunctional\", NGA_wp)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "title": "In-class Exercise 2: Tableau Hands-on Part 1",
+    "section": "",
+    "text": "In this exercise, we have some hands-on on Tableau.\nWe have learned to plot lines and bar charts together by region and order date.\nWe used colour mark card to differentiate profit and loss.\n\nThis visualisation is published in Tableau Public which you can find it here."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "title": "In-class Exercise 4: Recap on interactivity",
+    "section": "",
+    "text": "pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse, \n               readxl, gifski,gapminder, gganimate)\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#exercise-1",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#exercise-1",
+    "title": "In-class Exercise 4: Recap on interactivity",
+    "section": "Exercise 1:",
+    "text": "Exercise 1:\nCombining data_id and tooltip together\n\n\nShow the code\np &lt;- ggplot(data=exam_data,\n          aes(x = MATHS)) +\n    geom_dotplot_interactive(aes(data_id = CLASS, \n                                 tooltip = ID),\n                             stackgroups = TRUE,\n                             binwidth = 1,\n                             method = \"histodot\") +\n    scale_y_continuous(NULL, breaks = NULL) +\n    theme_classic()\n\ngirafe(ggobj = p,\n       width_svg = 6, height_svg = 6*0.618)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#exercise-2",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html#exercise-2",
+    "title": "In-class Exercise 4: Recap on interactivity",
+    "section": "Exercise 2:",
+    "text": "Exercise 2:\nShow tooltip of Maths and English score in Coordinated Multiple Views.\n\n\nShow the code\ntooltip &lt;- c(paste0(\"Name = \", exam_data$ID, \n                    \"\\nMath = \", exam_data$MATHS,\n                    \"\\nEnglish = \", exam_data$ENGLISH))\n             \np1 &lt;- ggplot(data = exam_data,aes(x = MATHS)) +\n      geom_dotplot_interactive(aes(tooltip= tooltip, data_id = ID),\n                              stackgroups = TRUE,\n                              binwidth = 1,\n                              method = \"histodot\") +\n      coord_cartesian(xlim = c(0,100)) +\n      scale_y_continuous(NULL, breaks = NULL) +\n      theme_classic()\n      \np2 &lt;- ggplot(data = exam_data, aes(x = ENGLISH)) +\n      geom_dotplot_interactive(aes(tooltip = ID, data_id = ID),\n                              stackgroups = TRUE,\n                              binwidth = 1,\n                              method = \"histodot\") +\n      coord_cartesian(xlim = c(0,100)) +\n      scale_y_continuous(NULL, breaks = NULL)+\n      theme_classic()\n\ngirafe(code = print(p1 / p2),\n    width_svg = 6,\n    height_svg = 3.8,\n    options = list(\n    opts_hover(css = \"fill: #202020;\"),\n    opts_hover_inv(css = \"opacity:0.2;\")))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "",
+    "text": "In this exercise, we create time-series charts in Tableau and R."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#line-and-cycle-charts",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#line-and-cycle-charts",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "1.1. Line and Cycle charts",
+    "text": "1.1. Line and Cycle charts\nThe dashboard consists of a line chart to show the air arrivals over the years and a cycle chart to show how the air arrivals change for each month. You can view it here.\n\n\n\n\n\n\n\nNote\n\n\n\nIn order to use only 1 filter for both charts, we have to apply one of the filters to all worksheets using the same data source and then keep one of the filters in the dasboard."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#calendar-map",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#calendar-map",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "1.2 Calendar map",
+    "text": "1.2 Calendar map\nWe can also create a calendar map in Tableau.\nThe timestamp column is used 3 times to create this calendar map.\n\nMonth and Week of timestamp in the columns of the chart\nWeekday of timestamp in the rows of the chart\n\n\n\n\n\n\n\n\nNote\n\n\n\nThere is a gap at the end and the start of each month as Tableau is not able to gel them together."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#installing-the-packages",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#installing-the-packages",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "2.1 Installing the packages",
+    "text": "2.1 Installing the packages\nggHoriPlot: create a horizon graph to show highly overlapping time-series.\n\npacman::p_load(tidyverse, ggHoriPlot, ggthemes)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#data-import",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#data-import",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "2.2 Data import",
+    "text": "2.2 Data import\nIn this exercise, Average Retail Prices Of Selected Consumer Items will be used.\nWe need to change the data format from character to Date format.\n\naverp &lt;- read_csv(\"data/AVERP.csv\") %&gt;%\n  mutate(`Date` = dmy(`Date`))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#create-horizon-graph",
+    "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html#create-horizon-graph",
+    "title": "In-class_Ex06: Time series charts",
+    "section": "2.3 Create horizon graph",
+    "text": "2.3 Create horizon graph\n\naverp %&gt;% \n  filter(Date &gt;= \"2018-01-01\") %&gt;%\n  ggplot() +\n  geom_horizon(aes(x = Date, y=Values), \n               origin = \"midpoint\", \n               horizonscale = 6) +\n  facet_grid(`Consumer Items`~.) +\n  theme_few() +\n  scale_fill_hcl(palette = 'RdBu') +\n  theme(panel.spacing.y=unit(0, \"lines\"), strip.text.y = element_text(\n    size = 5, angle = 0, hjust = 0),\n    legend.position = 'none',\n    axis.text.y = element_blank(),\n    axis.text.x = element_text(size=7),\n    axis.title.y = element_blank(),\n    axis.title.x = element_blank(),\n    axis.ticks.y = element_blank(),\n    panel.border = element_blank()) +\n  scale_x_date(expand=c(0,0), date_breaks = \"3 month\", date_labels = \"%b%y\") +\n  ggtitle('Average Retail Prices of Selected Consumer Items (Jan 2018 to Dec 2022)')"
   }
 ]

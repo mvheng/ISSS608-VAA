@@ -1,0 +1,82 @@
+---
+title: "In-class Exercise 4: Recap on interactivity"
+author: "Vanessa Heng"
+date: "February 3, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse, 
+               readxl, gifski,gapminder, gganimate)
+
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+# More information on ggiraph package
+
+## Exercise 1:
+
+Combining data_id and tooltip together
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+p <- ggplot(data=exam_data,
+          aes(x = MATHS)) +
+    geom_dotplot_interactive(aes(data_id = CLASS, 
+                                 tooltip = ID),
+                             stackgroups = TRUE,
+                             binwidth = 1,
+                             method = "histodot") +
+    scale_y_continuous(NULL, breaks = NULL) +
+    theme_classic()
+
+girafe(ggobj = p,
+       width_svg = 6, height_svg = 6*0.618)
+
+```
+
+## Exercise 2:
+
+Show tooltip of Maths and English score in Coordinated Multiple Views.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+tooltip <- c(paste0("Name = ", exam_data$ID, 
+                    "\nMath = ", exam_data$MATHS,
+                    "\nEnglish = ", exam_data$ENGLISH))
+             
+p1 <- ggplot(data = exam_data,aes(x = MATHS)) +
+      geom_dotplot_interactive(aes(tooltip= tooltip, data_id = ID),
+                              stackgroups = TRUE,
+                              binwidth = 1,
+                              method = "histodot") +
+      coord_cartesian(xlim = c(0,100)) +
+      scale_y_continuous(NULL, breaks = NULL) +
+      theme_classic()
+      
+p2 <- ggplot(data = exam_data, aes(x = ENGLISH)) +
+      geom_dotplot_interactive(aes(tooltip = ID, data_id = ID),
+                              stackgroups = TRUE,
+                              binwidth = 1,
+                              method = "histodot") +
+      coord_cartesian(xlim = c(0,100)) +
+      scale_y_continuous(NULL, breaks = NULL)+
+      theme_classic()
+
+girafe(code = print(p1 / p2),
+    width_svg = 6,
+    height_svg = 3.8,
+    options = list(
+    opts_hover(css = "fill: #202020;"),
+    opts_hover_inv(css = "opacity:0.2;")))
+```

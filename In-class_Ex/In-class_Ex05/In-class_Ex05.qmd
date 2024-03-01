@@ -1,0 +1,33 @@
+---
+title: "In-class Exercise 5: Build a Shiny App!"
+author: "Vanessa Heng"
+date: "February 17, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# 1. Basic of Shiny
+
+These are the 3 essential parts of building a Shiny app.
+
+-   UI interface for us to control the layout, appearance, and type of controls of the app. (This is what users will click or choose)
+
+-   Server function for us to build the output display in the forms of plot, text, table, image etc.
+
+-   ShinyApp is to create to shiny app object.
+
+![](/images/clipboard-830233651.png)
+
+# 2. Hands-on Practice
+
+We have learned how to create a simple Shiny app that allows users to choose the subject and bins of the histogram to be displayed.
+
+![](/images/ShinyApp.png)
+
+This app is also published on this [website](https://mvheng.shinyapps.io/Prototype1/).
