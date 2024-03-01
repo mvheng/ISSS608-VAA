@@ -1,0 +1,220 @@
+---
+title: "Hands-on Exercise 1: A Layered Grammar of Graphics"
+author: "Vanessa Heng"
+date: "January 9, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# 1 Getting Started
+
+## 1.1 Installing and launching R packages
+
+The code below uses p_load() of the pacman package to check if tidyverse packages are installed in the laptop. If they are, then they will be launched into R.
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+## 1.2 Importing the data
+
+Let's use read_csv function of [readr](https://readr.tidyverse.org/) package to load the data from *Exam_data.csv* into R.
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+# 2 Exploratory Data Analysis
+
+Let's understand more of the data given.
+
+```{r}
+summary(exam_data)
+```
+
+```{r}
+head(exam_data, 5)
+```
+
+::: callout-tip
+## Observations
+
+1.  This data is about students' examination scores for their 3 subjects (English, Maths, and Science) from various classes in Primary 3 from a school.
+
+2.  There are 4 categorical variables: ID, CLASS, GENDER, and RACE, and 3 continuous variables: ENGLISH, MATHS, and SCIENCE.
+
+3.  Out of the 3 subjects, Maths has the higher mean and median score.
+:::
+
+## 2.1 Examination scores distribution
+
+Let's create boxplots for the performance of 3 subjects and arrange them in a row for easy comparison.
+
+```{r}
+library("ggpubr")
+boxplt1 <- ggplot(data = exam_data,   
+  aes(y = MATHS)) +   
+  geom_boxplot() 
+boxplt2 <- ggplot(data = exam_data,   
+  aes(y = ENGLISH)) +   
+  geom_boxplot()
+boxplt3 <- ggplot(data = exam_data,   
+  aes(y = SCIENCE)) +   
+  geom_boxplot()
+ggarrange(boxplt1, boxplt2, boxplt3, ncol = 3, nrow = 1)
+```
+
+::: callout-tip
+## Observation
+
+Students did better in Maths as compared to English and Science. There are some outliers in Maths and English boxplots where students did very poorly.
+:::
+
+Let's dive a little deeper to see how each class performs.
+
+```{r}
+ggplot(data = exam_data,   
+  aes(x = CLASS, y = MATHS)) +   
+  geom_boxplot()+
+  stat_summary(geom = "point",       
+               fun = "mean",         
+               colour = "red",        
+               size = 3) 
+ggplot(data = exam_data,   
+  aes(x = CLASS, y = ENGLISH)) +   
+  geom_boxplot() +
+  stat_summary(geom = "point",       
+               fun = "mean",         
+               colour = "red",        
+               size = 3) 
+ggplot(data = exam_data,   
+  aes(x = CLASS, y = SCIENCE)) +   
+  geom_boxplot() +
+  stat_summary(geom = "point",       
+               fun = "mean",         
+               colour = "red",        
+               size = 3) 
+```
+
+::: callout-tip
+## Observations
+
+1.  There are 9 classes in this dataset.
+
+2.  Students from Class 3I have poorer performance in all 3 subjects (many failed 3 subjects), whereas students from Class 3A have better performance in all 3 subjects.
+:::
+
+## 2.2 Race distribution
+
+Let's take a look at the students' race distribution:
+
+```{r}
+ggplot(data = exam_data, 
+       aes(x = fct_infreq(RACE))) +
+  geom_bar() +
+  labs(title="Distribution of race",
+       x = "Race",
+       y = "Number of students") + 
+  ylim(0, 210) +
+  geom_text(aes(label = after_stat(count)), 
+            stat = "count", vjust = -0.5, colour = "brown")
+```
+
+::: callout-tip
+## Observation
+
+From the bar chart above, the majority of the students are Chinese, followed by Malay.
+:::
+
+What about the race distribution in each class?
+
+```{r}
+ggplot(data = exam_data) +
+  geom_bar(mapping = aes(x =CLASS, fill = RACE))
+
+```
+
+::: callout-tip
+## Observations
+
+1.  Class 3A has more Chinese students whereas Class 3I has more Malay students.
+
+2.  Class 3I has the fewest number of students.
+:::
+
+## 2.3 Gender distribution
+
+Let's take a look at the students' gender distribution:
+
+```{r}
+
+ggplot(data = exam_data, 
+       aes(x = fct_infreq(GENDER))) +
+  geom_bar() +
+  labs(title="Distribution of gender",
+       x = "Gender",
+       y = "Number of students") + 
+  ylim(0, 210) +
+  geom_text(aes(label = after_stat(count)), 
+            stat = "count", vjust = -0.5, colour = "brown")
+```
+
+::: callout-tip
+## Observation
+
+There are more female students than male students.
+:::
+
+What about the distribution of gender in each class?
+
+```{r}
+ggplot(data = exam_data) +
+  geom_bar(mapping = aes(x =CLASS, fill = GENDER))
+```
+
+::: callout-tip
+## Observation
+
+There are more female students in Class 3B and fewer female students in Class 3I.
+:::
+
+## 2.4 Correlation between performances of different subjects
+
+Let's see if there is any correlation between the performance of Maths vs English, Maths vs Science, and English vs Science via scatter plots.
+
+```{r}
+
+ggplot(data=exam_data,
+  aes(x = MATHS,y = ENGLISH)) +
+  geom_point() + 
+  geom_smooth(linewidth = 0.5) +
+  # use the same axis range
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+
+ggplot(data=exam_data,
+  aes(x = MATHS,y = SCIENCE)) +
+  geom_point() + 
+  geom_smooth(linewidth = 0.5) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+
+ggplot(data=exam_data,
+  aes(x = ENGLISH, y = SCIENCE)) +
+  geom_point() + 
+  geom_smooth(linewidth = 0.5) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+```
+
+::: callout-tip
+## Observations
+
+All 3 scatter plots show some positive correlation between the performances of the subjects. However, we would need to calculate the correlation coefficients to determine how strong the correlations are.
+:::

@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "ISSS608-VAA",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Welcome to my ISSS608 Visual Analytics and Applications journey.\nOn this website, you will find my coursework prepared for this course.\n“Everybody, try laughing. Then whatever scares you will go away!” - Tatsuo Kusakabe"
   },
   {
     "objectID": "about.html",
@@ -12,5 +12,54 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "",
+    "text": "The code below uses p_load() of the pacman package to check if tidyverse packages are installed in the laptop. If they are, then they will be launched into R.\n\npacman::p_load(tidyverse)\n\n\n\n\nLet’s use read_csv function of readr package to load the data from Exam_data.csv into R.\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#installing-and-launching-r-packages",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#installing-and-launching-r-packages",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "",
+    "text": "The code below uses p_load() of the pacman package to check if tidyverse packages are installed in the laptop. If they are, then they will be launched into R.\n\npacman::p_load(tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#importing-the-data",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#importing-the-data",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "",
+    "text": "Let’s use read_csv function of readr package to load the data from Exam_data.csv into R.\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#examination-scores-distribution",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#examination-scores-distribution",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "2.1 Examination scores distribution",
+    "text": "2.1 Examination scores distribution\nLet’s create boxplots for the performance of 3 subjects and arrange them in a row for easy comparison.\n\nlibrary(\"ggpubr\")\nboxplt1 &lt;- ggplot(data = exam_data,   \n  aes(y = MATHS)) +   \n  geom_boxplot() \nboxplt2 &lt;- ggplot(data = exam_data,   \n  aes(y = ENGLISH)) +   \n  geom_boxplot()\nboxplt3 &lt;- ggplot(data = exam_data,   \n  aes(y = SCIENCE)) +   \n  geom_boxplot()\nggarrange(boxplt1, boxplt2, boxplt3, ncol = 3, nrow = 1)\n\n\n\n\n\n\n\n\n\n\nObservation\n\n\n\nStudents did better in Maths as compared to English and Science. There are some outliers in Maths and English boxplots where students did very poorly.\n\n\nLet’s dive a little deeper to see how each class performs.\n\nggplot(data = exam_data,   \n  aes(x = CLASS, y = MATHS)) +   \n  geom_boxplot()+\n  stat_summary(geom = \"point\",       \n               fun = \"mean\",         \n               colour = \"red\",        \n               size = 3) \n\n\n\nggplot(data = exam_data,   \n  aes(x = CLASS, y = ENGLISH)) +   \n  geom_boxplot() +\n  stat_summary(geom = \"point\",       \n               fun = \"mean\",         \n               colour = \"red\",        \n               size = 3) \n\n\n\nggplot(data = exam_data,   \n  aes(x = CLASS, y = SCIENCE)) +   \n  geom_boxplot() +\n  stat_summary(geom = \"point\",       \n               fun = \"mean\",         \n               colour = \"red\",        \n               size = 3) \n\n\n\n\n\n\n\n\n\n\nObservations\n\n\n\n\nThere are 9 classes in this dataset.\nStudents from Class 3I have poorer performance in all 3 subjects (many failed 3 subjects), whereas students from Class 3A have better performance in all 3 subjects."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#race-distribution",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#race-distribution",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "2.2 Race distribution",
+    "text": "2.2 Race distribution\nLet’s take a look at the students’ race distribution:\n\nggplot(data = exam_data, \n       aes(x = fct_infreq(RACE))) +\n  geom_bar() +\n  labs(title=\"Distribution of race\",\n       x = \"Race\",\n       y = \"Number of students\") + \n  ylim(0, 210) +\n  geom_text(aes(label = after_stat(count)), \n            stat = \"count\", vjust = -0.5, colour = \"brown\")\n\n\n\n\n\n\n\n\n\n\nObservation\n\n\n\nFrom the bar chart above, the majority of the students are Chinese, followed by Malay.\n\n\nWhat about the race distribution in each class?\n\nggplot(data = exam_data) +\n  geom_bar(mapping = aes(x =CLASS, fill = RACE))\n\n\n\n\n\n\n\n\n\n\nObservations\n\n\n\n\nClass 3A has more Chinese students whereas Class 3I has more Malay students.\nClass 3I has the fewest number of students."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#gender-distribution",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#gender-distribution",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "2.3 Gender distribution",
+    "text": "2.3 Gender distribution\nLet’s take a look at the students’ gender distribution:\n\nggplot(data = exam_data, \n       aes(x = fct_infreq(GENDER))) +\n  geom_bar() +\n  labs(title=\"Distribution of gender\",\n       x = \"Gender\",\n       y = \"Number of students\") + \n  ylim(0, 210) +\n  geom_text(aes(label = after_stat(count)), \n            stat = \"count\", vjust = -0.5, colour = \"brown\")\n\n\n\n\n\n\n\n\n\n\nObservation\n\n\n\nThere are more female students than male students.\n\n\nWhat about the distribution of gender in each class?\n\nggplot(data = exam_data) +\n  geom_bar(mapping = aes(x =CLASS, fill = GENDER))\n\n\n\n\n\n\n\n\n\n\nObservation\n\n\n\nThere are more female students in Class 3B and fewer female students in Class 3I."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#correlation-between-performances-of-different-subjects",
+    "href": "Hands-on_Ex/Hands-On_Ex01/Hands-on_Ex01.html#correlation-between-performances-of-different-subjects",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "2.4 Correlation between performances of different subjects",
+    "text": "2.4 Correlation between performances of different subjects\nLet’s see if there is any correlation between the performance of Maths vs English, Maths vs Science, and English vs Science via scatter plots.\n\nggplot(data=exam_data,\n  aes(x = MATHS,y = ENGLISH)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  # use the same axis range\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\nggplot(data=exam_data,\n  aes(x = MATHS,y = SCIENCE)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\nggplot(data=exam_data,\n  aes(x = ENGLISH, y = SCIENCE)) +\n  geom_point() + \n  geom_smooth(linewidth = 0.5) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\n\n\n\n\n\n\n\n\n\nObservations\n\n\n\nAll 3 scatter plots show some positive correlation between the performances of the subjects. However, we would need to calculate the correlation coefficients to determine how strong the correlations are."
   }
 ]

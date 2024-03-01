@@ -1,11 +1,13 @@
 ---
 title: "ISSS608-VAA"
+author: "Vanessa Heng"
+date: "January 9, 2024"
 ---
 
-This is a Quarto website.
+Welcome to my **ISSS608 Visual Analytics and Applications** journey.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+On this website, you will find my coursework prepared for this course.
 
-```{r}
-1 + 1
-```
+***“Everybody, try laughing. Then whatever scares you will go away! ” - Tatsuo Kusakabe***
+
+![](images/totoro.jpg){fig-align="center" width="200"}
