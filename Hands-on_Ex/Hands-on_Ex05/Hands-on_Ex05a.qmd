@@ -89,7 +89,8 @@ Use **`ggtern()`** function of **ggtern** package to create a simple ternary plo
 ```{r}
 #| code-fold: true 
 #| code-summary: "Show the code" 
-ggtern(data = agpop_mutated,      
+#| eval: false
+ggtern(data = agpop_mutated, 
        aes(x = YOUNG,y = ACTIVE, z = OLD)) +   
   geom_point()
 ```
@@ -99,6 +100,7 @@ ggtern(data = agpop_mutated,
 ```{r}
 #| code-fold: true 
 #| code-summary: "Show the code" 
+#| eval: false
 ggtern(data = agpop_mutated,         
        aes(x = YOUNG,y = ACTIVE, z = OLD)) +   
   geom_point() +   
