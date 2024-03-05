@@ -392,7 +392,7 @@ g + theme_graph()
 
 ```
 
-## **6.3 Visualising Community**
+## 6.3 Visualising Community
 
 tidygraph package inherits many of the community detection algorithms imbedded into igraph and makes them available to us, including *Edge-betweenness (group_edge_betweenness)*, *Leading eigenvector (group_leading_eigen)*, *Fast-greedy (group_fast_greedy)*, *Louvain (group_louvain)*, *Walktrap (group_walktrap)*, *Label propagation (group_label_prop)*, *InfoMAP (group_infomap)*, *Spinglass (group_spinglass)*, and *Optimal (group_optimal)*. Some community algorithms are designed to take into account direction or weight, while others ignore it.
 
@@ -413,7 +413,7 @@ g <- GAStech_graph %>%
 g + theme_graph()
 ```
 
-# **7 Building Interactive Network Graph with visNetwork**
+# 7 Building Interactive Network Graph with visNetwork
 
 -   [`visNetwork()`](http://datastorm-open.github.io/visNetwork/) is a R package for network visualization, using [vis.js](http://visjs.org/) javascript library.
 
@@ -428,8 +428,8 @@ g + theme_graph()
     -   We can move the nodes and the graph will use an algorithm to keep the nodes properly spaced.
 
     -   We can also zoom in and out on the plot and move it around to re-center it.
-    
-::: panel-tabset
+
+::: panel-tabset 
 # Step1: Data Prep
 
 ```{r}
@@ -478,9 +478,8 @@ visNetwork(GAStech_nodes,
 ```
 
 # Step5: Apply visual attributes (Edges)
- `visEdges()` is used to symbolise the edges.
-- The argument `arrows` is used to define where to place the arrow.
-- The argument `smooth` is used to plot the edges using a smooth curve.
+
+`visEdges()` is used to symbolise the edges. - The argument `arrows` is used to define where to place the arrow. - The argument `smooth` is used to plot the edges using a smooth curve.
 
 ```{r}
 
@@ -495,10 +494,11 @@ visNetwork(GAStech_nodes,
 ```
 
 # Step6: Interactivty
+
 `visOptions()` is used to incorporate interactivity features in the data visualisation.
 
-- The argument `highlightNearest` highlights nearest when clicking a node.
-- The argument `nodesIdSelection` adds an id node selection creating an HTML select element.
+-   The argument `highlightNearest` highlights nearest when clicking a node.
+-   The argument `nodesIdSelection` adds an id node selection creating an HTML select element.
 
 ```{r}
 visNetwork(GAStech_nodes,
@@ -509,7 +509,7 @@ visNetwork(GAStech_nodes,
   visLegend() %>%
   visLayout(randomSeed = 123)
 ```
-
+:::
 
 # 8 References
 
