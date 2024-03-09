@@ -1363,5 +1363,12 @@
     "title": "Hands-on Exercise 2: Beyond ggplot2 Fundamentals",
     "section": "5.6 Creating a composite figure by using patchwork and ggtheme",
     "text": "5.6 Creating a composite figure by using patchwork and ggtheme\n\nApply theme to all plotsApply theme to a single plot\n\n\n\npatchwork &lt;- (p1 / p2) | p3\npatchwork & theme_economist()\n\n\n\n\n\n\n\n(p1 / p2) | (p3 + theme_economist())"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ISSS608-VAA",
+    "section": "",
+    "text": "Welcome to my 10-week ISSS608 Visual Analytics and Applications journey.\nOn this website, you will find my coursework prepared for this course.\nThe road is tough but the following quote motivates me!\n“Everybody, try laughing. Then whatever scares you will go away!” - Tatsuo Kusakabe"
   }
 ]
