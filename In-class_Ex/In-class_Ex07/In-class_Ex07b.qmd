@@ -1,0 +1,74 @@
+---
+title: "In-class Exercise 7b: Geospatial Analysis using R"
+author: "Vanessa Heng"
+date: "March 9, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# 1 Overview
+
+This exercise is to give us more practices on handling geospatial data.
+
+# 2 Getting started
+
+## 2.1 Installing and loading the packages
+
+For this exercise, the following R packages will be used:
+
+-   [**sf**](https://cran.r-project.org/web/packages/sf/) for handling geospatial data.
+-   [terra](https://cran.r-project.org/web/packages/terra/) for handling spatial data analysis with vector (points, lines, polygons) and raster (grid) data.
+-   viridis: colour library
+
+```{r}
+pacman::p_load(sf, terra, gstat, tmap, viridis, tidyverse)
+```
+
+## 2.2 Load data
+
+The data we have is the rainfall data from Weather stations and the latitude and longitude of all weather stations.
+
+```{r}
+rfstations <- read_csv("data/aspatial/RainfallStation.csv")
+```
+We sum the total rainfall by month.
+```{r}
+rfdata <- read_csv("data/aspatial/DAILYDATA_202402.csv") %>% 
+   select (c(1,5)) %>%  #select column 1 and 5 which is station and total rainfall
+   group_by(Station) %>% 
+   summarise(MONTHSUM = sum(`Daily Rainfall Total (mm)`)) %>% 
+   ungroup()
+```
+
+Join these 2 datasets using left-join so that we only join latitude and longitude of the stations that have rainfall values.
+
+```{r}
+rfdata <- rfdata %>% 
+   left_join(rfstations)
+
+```
+
+```{r}
+rfdata_sf <- st_as_sf(rfdata, 
+                      coords = c("Longitude",
+                                 "Latitude"),
+                      crs = 4326) %>% 
+   st_transform(crs = 3414)
+```
+
+```{r}
+mpsz209 <-st_read(dsn = "data/geospatial/", 
+                  layer = "MPSZ-2019") %>% 
+   st_transform(crs = 3414)
+```
+
+```{r}
+tmap_options(check.and.fix = TRUE)
+
+```

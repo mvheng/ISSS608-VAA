@@ -59,6 +59,10 @@ website:
             href: "In-class_Ex/In-class_Ex05/In-class_Ex05.html"
           - text: "6. Time series charts"
             href: "In-class_Ex/In-class_Ex06/In-class_Ex06.html"
+          - text: "7a. Geospatial maps in Tableau"
+            href: "In-class_Ex/In-class_Ex07/In-class_Ex07a.html"
+          - text: "7b. Geospatial maps in R"
+            href: "In-class_Ex/In-class_Ex07/In-class_Ex07b.html"
       - text: "Take-home Exercises"
         menu: 
           - text: "1. PISA Singapore 2022"
@@ -71,7 +75,7 @@ website:
             href: "Take-home_Ex/Take-home_Ex04/Take-home_Ex04.html"
 format:
   html:
-    theme: minty
+    theme: pulse
     css: styles.css
     toc: true
 

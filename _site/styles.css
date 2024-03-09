@@ -1,1 +1,9 @@
 /* css styles */
+.callout.callout-style-default .callout-body {
+  background-color: azure;
+}
+.textclass{
+  border-style: solid;
+  background-color: pink;
+  color: darkblue;
+}

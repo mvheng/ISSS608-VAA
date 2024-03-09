@@ -1,0 +1,47 @@
+---
+title: "In-class Exercise 7a: Geospatial Analysis using Tableau"
+author: "Vanessa Heng"
+date: "March 9, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# 1 Overview
+
+In this exercise, we have some more hands-on using geographical data on Tableau.
+
+We use the realis 2022-2023 data to analyse the property data.
+
+# 2 Load data
+
+We have 8 realis files and we union them in Tableau.
+
+![](images/clipboard-4223191758.png){width="313"}
+
+# 3 Proportional Map
+
+![](images/clipboard-3688877857.png)
+
+::: callout-note
+Note that there are 429 unknown postal codes as they are not available in OpenStreetMap.
+:::
+
+We also created a tooltip sheet to show the median unit price for each quarter.
+
+![](images/clipboard-120316823.png){width="521"}
+
+# 4 Choropleth
+
+We use the Planning Area in the map, hence we need to change it to a geographic role using State.
+
+![](images/clipboard-1263552269.png)
+
+# 5 Treemap
+
+# ![](images/clipboard-3661178256.png)

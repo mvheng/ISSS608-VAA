@@ -1,0 +1,14 @@
+{
+  "hash": "b710ef8cfb022c958016e633e4074b88",
+  "result": {
+    "markdown": "---\ntitle: \"In-class Exercise 7b: Geospatial Analysis using R\"\nauthor: \"Vanessa Heng\"\ndate: \"March 9, 2024\"\ndate-modified: \"last-modified\"\nexecute:\n  eval: true\n  echo: true\n  freeze: true\n  warning: false\n  message: false\neditor: visual\n---\n\n\n# 1 Overview\n\nThis exercise is to give us more practices on handling geospatial data.\n\n# 2 Getting started\n\n## 2.1 Installing and loading the packages\n\nFor this exercise, the following R packages will be used:\n\n-   [**sf**](https://cran.r-project.org/web/packages/sf/) for handling geospatial data.\n-   [terra](https://cran.r-project.org/web/packages/terra/) for handling spatial data analysis with vector (points, lines, polygons) and raster (grid) data.\n-   viridis: colour library\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(sf, terra, gstat, tmap, viridis, tidyverse)\n```\n:::\n\n\n## 2.2 Load data\nThe data we have is the rainfall data from Paya Lebar Weather station and the latitude and longitude of all weather stations.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nrfstations <- read_csv(\"data/aspatial/RainfallStation.csv\")\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
