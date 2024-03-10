@@ -203,7 +203,7 @@ weather$DDate <- as.Date(paste(weather$Year,
 Temp_YM <- weather %>% 
    group_by(Year, Month, Region) %>% 
    reframe(DDate = DDate,
-            AveMeanTemp = mean(MeanTemp, na.rm = TRUE),
+            AveMeanTemp = round(mean(MeanTemp, na.rm = TRUE),1),
             MaxMaxTemp = max(MaxTemp, na.rm = TRUE),
             MinMinTemp = min(MinTemp, na.rm = TRUE)) %>% 
    distinct() %>% 
@@ -213,7 +213,7 @@ Temp_YM <- weather %>%
 Temp_YM_allR <- weather %>% 
    group_by(Year, Month) %>% 
    reframe(DDate = DDate,
-            AveMeanTemp = mean(MeanTemp, na.rm = TRUE),
+            AveMeanTemp = round(mean(MeanTemp, na.rm = TRUE),1),
             MaxMaxTemp = max(MaxTemp, na.rm = TRUE),
             MinMinTemp = min(MinTemp, na.rm = TRUE)) %>% 
    distinct() %>%
@@ -223,7 +223,7 @@ Temp_YM_allR <- weather %>%
 Rain_YM <- weather %>% 
    group_by(Region, Year, Month) %>% 
    reframe(DDate = DDate,
-            MeanRainfall = sum(Rainfall, na.rm = TRUE),
+            MeanRainfall = round(sum(Rainfall, na.rm = TRUE),1),
             HighRainfall30 = sum(Rainfall30, na.rm = TRUE),
             HighRainfall60 = sum(Rainfall60, na.rm = TRUE),
             HighRainfall120 = sum(Rainfall120, na.rm = TRUE)) %>% 
@@ -248,7 +248,7 @@ Rain_YM_allR <- weather %>%
 
 I will be working on the forecasting of temperature and rainfall (univariate) for the next few years.
 
-![](images/clipboard-2215821212.png)From the above design, users are able to make the following selection:
+![](images/clipboard-3874476906.png)From the above design, users are able to make the following selection:
 
 -   Choose the forecasting model (ARIMA, Holt-Winters or Seasonal & Trend Decomposition)
 
@@ -276,117 +276,114 @@ GenerateTS <- function(variable_name, model_name, select_region,
   
    if (variable_name == "Temp") {
       if (select_region != "All") {
-         temp <- Temp_YM %>%
-            filter(Region == select_region)
+          temp <- Temp_YM %>%
+            filter(Region == select_region) %>% 
+            rename(Value = AveMeanTemp) 
+      } else {
+         temp <- Temp_YM_allR %>% 
+            rename(Value = AveMeanTemp)
       }
-      else {
-         temp <- Temp_YM_allR
-      }
-      ts_data <- ts(temp$AveMeanTemp, 
-                 start = c(min(temp$Year),1), 
-                 end = c(max(temp$Year),12), frequency = 12)
-      minDate = min(temp$DDate)
       displayText = "Temp"
       displayUnit = "°C"
-    }
-    else {
+    } else {
       if (select_region != "All") {
-         temp <- Rain_YM %>%
-            filter(Region == select_region)
-      }
-      else {
-         temp <- Rain_YM_allR
-      }
-      ts_data <- ts(temp$MeanRainfall, 
-                 start = c(min(temp$Year),1), 
-                 end = c(max(temp$Year),12), frequency = 12)    
-      minDate = min(temp$DDate)
+          temp <- Rain_YM %>%
+            filter(Region == select_region) %>% 
+            rename(Value = MeanRainfall) 
+      } else {
+         temp <- Rain_YM_allR %>% 
+            rename(Value = MeanRainfall)
+       }
       displayText = "Rainfall"
       displayUnit = "mm"
-   }
-       
+    }
+   
+   minDate = min(temp$DDate)
+   maxDate = max(temp$DDate)
+   ts_data <- ts(temp$Value, 
+                 start = c(year(minDate), month(minDate)), 
+                 end = c(year(maxDate), month(maxDate)), frequency = 12)  
+      
    switch(model_name,
-     "ARIMA" = { model = auto.arima(ts_data, p = 5, seasonal = TRUE)},
-     "HoltWinters" = { model <- HoltWinters(ts_data)},
-     "STL" = {model <- stl(ts_data, s.window="periodic") }
+      "ARIMA" = { model = auto.arima(ts_data, p = 5, seasonal = TRUE)},
+      "HoltWinters" = { model <- HoltWinters(ts_data)},
+      "STL" = {model <- stl(ts_data, s.window="periodic") }
    )
     
-    forecast_values <- forecast(model, h = forecast_year * 12, 
-                                level = c(conf_level))
-    accuracy_metrics <- accuracy(forecast_values)
-    
-    actual_values <- ts_data[(length(ts_data) - 
-                           length(forecast_values$mean) + 1):length(ts_data)]
-    
-    forecast_df <- data.frame(Date = time(forecast_values$mean), 
-                              Forecast = forecast_values$mean, 
-                              LowerV = forecast_values$lower, 
-                              UpperV = forecast_values$upper)
-    
-    forecast_df$YearMonth <- format(as.Date(forecast_df$Date, 
-                                            origin = minDate), "%Y-%m")
-    
-    LowerV <- paste("X", as.character(conf_level), ".", sep = "")
-    HigherV <- paste("X", as.character(conf_level), "..1", sep = "")
-    names(forecast_df)[names(forecast_df) == HigherV] <- "UpperV"
-    names(forecast_df)[names(forecast_df) == LowerV] <- "LowerV"
-    
-    #cannot go negative
-    forecast_df$LowerV <- pmax(forecast_df$LowerV, 0)
-  
-    actual_df <- data.frame(Date = time(ts_data), Actual = ts_data)
-    actual_df$YearMonth <- format(as.Date(actual_df$Date, 
-                                            origin = minDate), "%Y-%m")
-  
-    g <- plot_ly() %>%
-            add_lines(data = forecast_df, x = ~Date, y = ~Forecast, 
-                name = "Forecast", line = list(color = 'blue'), 
-                hoverinfo = "text", 
-                text = ~paste("Year-Month: ", YearMonth, 
-                              "<br>", displayText, ": ", 
-                              round(Forecast,2), displayUnit))%>%
-            add_lines(data = actual_df, x = ~Date, y = ~Actual, 
-                     name = "Actual", line = list(color = 'red'), 
-                     hoverinfo = "text", 
-                     text = ~paste("Year-Month: ", YearMonth, 
-                                   "<br>", displayText, ": ", 
-                                   round(Actual,2), displayUnit)) %>%
-            add_ribbons(data = forecast_df, x = ~Date, 
-                        ymin = ~LowerV, ymax = ~UpperV, 
-                       name = paste(conf_level, "% CI"), 
-                       fillcolor = 'lightblue',
-                       opacity = 0.5,
-                       hoverinfo = "text", 
-                       text = ~paste("Year-Month: ", YearMonth, 
-                                     "<br>CI:", round(LowerV,2), displayUnit,
-                                     "-", round(UpperV,2), displayUnit)) %>%
-            layout(title = paste("Forecasting for the next ", forecast_year,
-                                " years using ", model_name),
-                  xaxis = list(title = "Year"),
-                  yaxis = list(title = "Value"))
+   forecast_values <- forecast(model, h = forecast_year * 12, 
+                             level = c(conf_level))
+   actual_values <- ts_data[(length(ts_data) - 
+                        length(forecast_values$mean) + 1):length(ts_data)]
+   
+   forecast_df <- data.frame(Date = time(forecast_values$mean), 
+                           Forecast = forecast_values$mean, 
+                           LowerV = forecast_values$lower, 
+                           UpperV = forecast_values$upper)
+   
+   actual_df <- data.frame(Date = time(ts_data), Actual = ts_data)
+   forecast_df$Period <- format(as.Date(forecast_df$Date, 
+                                      origin = minDate), "%Y-%m")
+   actual_df$Period <- format(as.Date(actual_df$Date, 
+                                      origin = minDate), "%Y-%m")
+   
+   LowerV <- paste("X", as.character(conf_level), ".", sep = "")
+   HigherV <- paste("X", as.character(conf_level), "..1", sep = "")
+   names(forecast_df)[names(forecast_df) == HigherV] <- "UpperV"
+   names(forecast_df)[names(forecast_df) == LowerV] <- "LowerV"
+   
+   #cannot go negative
+   forecast_df$LowerV <- pmax(forecast_df$LowerV, 0)
+   
+   g <- plot_ly() %>%
+         add_lines(data = forecast_df, x = ~Date, y = ~Forecast, 
+             name = "Forecast", line = list(color = 'blue'), 
+             hoverinfo = "text", 
+             text = ~paste("Year-Month: ", Period, 
+                           "<br>", displayText, ": ", 
+                           round(Forecast, 1), displayUnit))%>%
+         add_lines(data = actual_df, x = ~Date, y = ~Actual, 
+                  name = "Actual", line = list(color = 'red'), 
+                  hoverinfo = "text", 
+                  text = ~paste("Year-Month: ", Period, 
+                                "<br>", displayText, ": ", 
+                                Actual, displayUnit)) %>%
+         add_ribbons(data = forecast_df, x = ~Date, 
+                     ymin = ~LowerV, ymax = ~UpperV, 
+                    name = paste(conf_level, "% CI"), 
+                    fillcolor = 'lightblue',
+                    opacity = 0.5,
+                    hoverinfo = "text", 
+                    text = ~paste("Year-Month: ", Period, 
+                                  "<br>CI:", round(LowerV,1), displayUnit,
+                                  "-", round(UpperV,1), displayUnit)) %>%
+         layout(title = paste("Forecasting ", displayText,
+                              " for the next ", forecast_year,
+                              " years using ", model_name),
+               xaxis = list(title = "Year"),
+               yaxis = list(title = displayText))
          
-    if (model_name == "STL") {
-        par(mfrow=c(3, 1))  # Set up a 3x1 layout for plots
-        trend <- model$time.series[, "trend"]
-        seasonal <- model$time.series[, "seasonal"]
-        remainder <- model$time.series[, "remainder"]
-        # Plot trend component
-        plot(time(ts_data), trend, type="l", col="blue",
-             main="Trend Component", xlab="Time", ylab="Trend")
-        
-        # Plot seasonal component
-        plot(time(ts_data), seasonal, type="l", col="green", 
-             main="Seasonal Component", xlab="Time", ylab="Seasonal")
-        
-        # Plot remainder (residual) component
-        plot(time(ts_data), remainder, type="l", col="red", 
-             main="Remainder Component", xlab="Time", ylab="Remainder")
-        
-        # Reset par to default settings
-        par(mfrow=c(1, 1))
-    } 
-    
-    g
+   if (model_name == "STL") {
+     par(mfrow=c(3, 1))  # Set up a 3x1 layout for plots
+     trend <- model$time.series[, "trend"]
+     seasonal <- model$time.series[, "seasonal"]
+     remainder <- model$time.series[, "remainder"]
+     # Plot trend component
+     plot(time(ts_data), trend, type="l", col="blue",
+          main="Trend Component", xlab="Time", ylab="Trend")
+     
+     # Plot seasonal component
+     plot(time(ts_data), seasonal, type="l", col="green", 
+          main="Seasonal Component", xlab="Time", ylab="Seasonal")
+     
+     # Plot remainder (residual) component
+     plot(time(ts_data), remainder, type="l", col="red", 
+          main="Remainder Component", xlab="Time", ylab="Remainder")
+     
+     # Reset par to default settings
+     par(mfrow=c(1, 1))
+   } 
+   
+   g
 }
 ```
 
@@ -469,3 +466,6 @@ plot_ly() %>%
          xaxis = list(title = 'Date'),
          yaxis = list(title = 'Temperature'))
 ```
+
+
+
