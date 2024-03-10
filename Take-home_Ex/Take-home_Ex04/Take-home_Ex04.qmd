@@ -85,7 +85,7 @@ glimpse(data)
 ```
 
 ::: callout-note
-All the 18 weather stations have a total of 168,439 records.
+All the 18 weather stations have a total of 168,836 records.
 
 The data shows that there are two sets of variables for mean, maximum, and minimum temperature records:
 
@@ -466,6 +466,3 @@ plot_ly() %>%
          xaxis = list(title = 'Date'),
          yaxis = list(title = 'Temperature'))
 ```
-
-
-
