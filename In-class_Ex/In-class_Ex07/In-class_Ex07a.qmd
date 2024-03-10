@@ -44,4 +44,4 @@ We use the Planning Area in the map, hence we need to change it to a geographic 
 
 # 5 Treemap
 
-# ![](images/clipboard-3661178256.png)
+![](images/clipboard-3661178256.png)
