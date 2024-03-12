@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 9: Information Dashboard Design: R methods"
+title: "Hands-on Exercise 9: Information Dashboard Design"
 author: "Vanessa Heng"
 date: "March 12, 2024"
 date-modified: "last-modified"
