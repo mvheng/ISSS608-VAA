@@ -47,7 +47,7 @@ This exercise will focus on the last section - time series forecast.
 The code below uses `p_load()` of the Pacman package to check if all the required packages are installed on the laptop. If they are, then they will be launched into the R environment.
 
 |                                    Package                                    | Description                                                                                                  |
-|:----------------------------:|------------------------------------------|
+|:-----------------------------------------------------------------------------:|--------------------------------------------------------------------------------------------------------------|
 |                  [**tidyverse**](https://www.tidyverse.org/)                  | A collection of core packages designed for data science used extensively for data preparation and wrangling. |
 | [**lubridate**](https://lubridate.tidyverse.org/reference/make_datetime.html) | For manipulating date-times.                                                                                 |
 |          [**janitor**](https://sfirke.github.io/janitor/reference/)           | For quick formatting of data frame columns.                                                                  |
@@ -96,7 +96,7 @@ The data shows that there are two sets of variables for mean, maximum, and minim
 This might happen during `clean_names()` where there is a minor difference in the column names from different files.
 :::
 
-As the data is huge and it takes some time to load each file, let's write into a RDS file and read it for easy use.
+As the data is huge and it takes some time to load each file, let's write it into an RDS file and read it for easy use.
 
 ```{r}
 #| eval: false

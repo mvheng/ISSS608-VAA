@@ -6,7 +6,7 @@ date-modified: "last-modified"
 execute:
   eval: true
   echo: true
-  #freeze: true
+  freeze: true
   warning: false
   message: false
 editor: visual
@@ -429,7 +429,7 @@ g + theme_graph()
 
     -   We can also zoom in and out on the plot and move it around to re-center it.
 
-::: panel-tabset 
+::: panel-tabset
 # Step1: Data Prep
 
 ```{r}
