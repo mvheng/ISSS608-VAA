@@ -40,27 +40,47 @@ The R Shiny app will consist of the following sections:
 
 This exercise will focus on the last section - time series forecast.
 
-# 2 Data Preparation
+# 2 Data Extraction
 
-## 2.1 Installing R packages
+On the [MSS Historical Daily Records](#0) page, we are able to select the weather station, month and year to display. After that, we can click on the CSV option to download the data.
+
+![](images/clipboard-2263392876.png)For this project, we will analyse the historical temperature and rainfall data collected by MSS based on the 18 weather stations (Table 1).
+
+The selected stations with complete datasets from 1980 onwards provide a long-term perspective on climate trends, which is crucial for accurate modelling and prediction. Automated instruments from 2009 enhance data reliability and allow continuous monitoring without manual intervention gaps.
+
+![](images/clipboard-489647606.png)
+
+As there are 42 years of monthly data to download for each station, my team has written a Robotic Process Automation script using UiPath software to download all the necessary data. In total, we have 5,552 CSV files downloaded.
+
+![](images/clipboard-248841643.png){width="482"}
+
+# 3 Data Preparation
+
+## 3.1 Installing R packages
 
 The code below uses `p_load()` of the Pacman package to check if all the required packages are installed on the laptop. If they are, then they will be launched into the R environment.
 
 |                                    Package                                    | Description                                                                                                  |
-|:-----------------------------------------------------------------------------:|--------------------------------------------------------------------------------------------------------------|
+|:----------------------------:|------------------------------------------|
 |                  [**tidyverse**](https://www.tidyverse.org/)                  | A collection of core packages designed for data science used extensively for data preparation and wrangling. |
 | [**lubridate**](https://lubridate.tidyverse.org/reference/make_datetime.html) | For manipulating date-times.                                                                                 |
 |          [**janitor**](https://sfirke.github.io/janitor/reference/)           | For quick formatting of data frame columns.                                                                  |
 |                     [**fs**](https://github.com/r-lib/fs)                     | For retrieving a list of file names in our directory for import into R                                       |
 |    [**zoo**](https://www.rdocumentation.org/packages/zoo/versions/1.8-12)     | For irregular time series of numeric vectors/matrices and factors manipulation                               |
+|  [**visdat**](https://www.rdocumentation.org/packages/visdat/versions/0.6.0)  | For checking missing values in a dataframe                                                                   |
 
 ```{r}
-pacman::p_load(readr, tidyverse, plotly, ggplot2, zoo, forecast, janitor, fs)
+pacman::p_load(readr, tidyverse, plotly, ggplot2, 
+               zoo, forecast, janitor, fs, visdat)
 ```
 
-## 2.2 Importing data
+## 3.2 Importing data
 
-Based on the MSS website, we can download the monthly data of a selected climate station each time. As such, I have written a robotic process automation bot using UIPath software to download all the monthly data and store them in the /data/weather folder. Let's read all the 5552 CSV files downloaded for the 18 weather stations that have records from the year 1980 onwards.
+Let's read all the 5,547 CSV files downloaded for the 18 weather stations that have records from the year 1980 onwards.
+
+-   [`dir_ls()`](https://fs.r-lib.org/reference/dir_ls.html) function from the **fs** package in R to list *filenames* in our directory where we have saved the monthly historical records.
+
+-   [`map_df()`](https://www.rdocumentation.org/packages/purrr/versions/0.2.5/topics/map) function from the **purrr** package is used to iterate over each file in the directory.
 
 -   `locale` argument in `read_csv()` is to specify the encoding as [Latin-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1), as some of the headers contain special characters, like the degree symbol (°). The Latin-1 encoding ensures R can read and process such special characters.
 
@@ -96,65 +116,61 @@ The data shows that there are two sets of variables for mean, maximum, and minim
 This might happen during `clean_names()` where there is a minor difference in the column names from different files.
 :::
 
-As the data is huge and it takes some time to load each file, let's write it into an RDS file and read it for easy use.
+It will be meaningful to also analyse weather data by region in Singapore. Hence, we also searched for each weather station's region on public websites like the HDB website and data.gov.sg. Let's import the region information now.
 
 ```{r}
-#| eval: false
-write_rds(data, "data/weather.rds")
-```
-
-```{r}
-data <- read_rds("data/weather.rds")
-
-```
-
-Let's read the region data.
-
-```{r}
+#| eval: False
 region <- read_csv("data/Region.csv") 
 glimpse(region)
 ```
 
-## 2.3 Data Wrangling
+## 3.3 Data Wrangling
 
-Let's use `coalesce()` function to copy the values from the second set of temperature values to the first set and then deselect the second set of columns.
+### 3.3.1 Remove extra columns
+
+Let's use the `coalesce()` function to copy the values from the second set of temperature values to the first set and then deselect the second set of columns. We are also not focusing on the wind speed variables, hence we will deselect the 2 variables on wind speed.
 
 ```{r}
-data$mean_temperature_c <- coalesce(data$mean_temperature_c,
-                                       data$mean_temperature_a_c)
-data$maximum_temperature_c <- coalesce(data$maximum_temperature_c,
-                                          data$maximum_temperature_a_c)
-data$minimum_temperature_c <- coalesce(data$minimum_temperature_c,
-                                          data$minimum_temperature_a_c)
+#| eval: false
+data$mean_temperature_c <- coalesce(data$mean_temperature_c, 
+                                    data$mean_temperature_a_c) 
+data$maximum_temperature_c <- coalesce(data$maximum_temperature_c, 
+                                       data$maximum_temperature_a_c)
+data$minimum_temperature_c <- coalesce(data$minimum_temperature_c,     
+                                       data$minimum_temperature_a_c)
 
-data %>% select(-c(mean_temperature_a_c,
-                     maximum_temperature_a_c,
-                     minimum_temperature_a_c, 
-                     mean_wind_speed_km_h, 
-                     max_wind_speed_km_h))
+data %>% 
+  select(-c(mean_temperature_a_c, 
+            maximum_temperature_a_c, 
+            minimum_temperature_a_c, 
+            mean_wind_speed_km_h, 
+            max_wind_speed_km_h))
 
 glimpse(data)
 ```
 
-**Remove weird characters**
+### 3.3.2 Remove weird characters
 
-There are some weird characters in the data frame. Let's replace them with NA.
+There are some weird characters ('\u0097') in the data frame. Let's replace them with NA.
 
 ```{r}
-data <- data %>%
+#| eval: False
+data <- data %>% 
   mutate_all(~ ifelse(. == "\u0097", NA, .))
+glimpse(data)
 ```
 
-**Tidy up the weather data**
+### 3.3.3 Tidy the data
 
 Finally, let's clean up the weather data and create a column for date, change the necessary columns to numeric, and shorten the column names for simplicity.
 
 ```{r}
+#| eval: False
 weather <- data %>% 
   mutate(station = station,
-       DDate = make_date(year = year, month = month, day = day),
        year = as.numeric(year),
-       month = lubridate::month(DDate, label = TRUE),         
+       Date = make_date(year = year, month = month, day = 1),
+       month = lubridate::month(Date, label = TRUE),         
        day = as.numeric(day),
        daily_rainfall_total_mm = as.numeric(daily_rainfall_total_mm), 
        highest_30_min_rainfall_mm = as.numeric(highest_30_min_rainfall_mm), 
@@ -172,9 +188,9 @@ weather <- data %>%
     Rainfall30 = highest_30_min_rainfall_mm,
     Rainfall60 = highest_60_min_rainfall_mm,
     Rainfall120 = highest_120_min_rainfall_mm,
-    MeanTemp = mean_temperature_c,
-    MaxTemp = maximum_temperature_c,
-    MinTemp = minimum_temperature_c
+    MeanTemperature = mean_temperature_c,
+    MaxTemperature = maximum_temperature_c,
+    MinTemperature = minimum_temperature_c
   ) %>% 
   subset(select = -c(mean_temperature_a_c,
                      maximum_temperature_a_c,
@@ -183,36 +199,71 @@ weather <- data %>%
                      max_wind_speed_km_h))
 ```
 
-## 2.4 Merge datasets
+### 3.3.4 Merge datasets
+
+Let's join the weather data with its region information using the common variable 'Station'.
 
 ```{r}
+#| eval: False
 weather <- merge(weather, region, by= "Station")
 glimpse(weather)
 ```
 
-## 2.5 Create subsets of data
+### 3.3.5 Create subsets of data
 
-Let's create subsets of weather data for only Temperature or Rainfall variables.
-
-Each Temperature or Rainfall variable has 2 subsets - one with region grouping, one without region grouping.
+Let's create subsets of weather data for only Temperature or Rainfall and save them as RDS files for easy loading when we are developing for the subsequent analysis.
 
 ```{r}
-weather$DDate <- as.Date(paste(weather$Year, 
-                            weather$Month,
-                            1, sep = "-"), format = "%Y-%b-%d")
+#| eval: False
 Temp_YM <- weather %>% 
+   group_by(Station, Region, Year, Month) %>% 
+   reframe(Date = Date,
+            MeanTemp = round(mean(MeanTemperature, na.rm = TRUE),1),
+            MaxTemp = round(max(MaxTemperature, na.rm = TRUE),1),
+            MinTemp = round(min(MinTemperature, na.rm = TRUE),1) ) %>% 
+   distinct() %>% 
+   ungroup() %>% 
+   filter(!is.na(MeanTemp))
+
+write_rds(Temp_YM, "data/temperature.rds")
+
+Rainfall_YM <- weather %>% 
+   group_by(Station, Region, Year, Month) %>% 
+   reframe(Date = Date,
+            TotalRainfall = round(sum(Rainfall, na.rm = TRUE),1),
+            TotalRainfall30 = round(sum(Rainfall30, na.rm = TRUE),1),
+            TotalRainfall60 = round(sum(Rainfall60, na.rm = TRUE),1),
+            TotalRainfall120 = round(sum(Rainfall120, na.rm = TRUE),1)) %>% 
+   distinct() %>% 
+   ungroup() %>% 
+   filter(!is.na(TotalRainfall))
+
+write_rds(Rainfall_YM, "data/rainfall.rds")
+```
+
+Let's load the RDS and check for missing data in Temp_YM and Rainfall_YM.
+
+```{r}
+Temperature <- read_rds("data/temperature.rds")
+Rainfall <- read_rds("data/rainfall.rds")
+vis_miss(Temperature)
+vis_miss(Rainfall)
+```
+
+```{r}
+Temp_YM <- Temperature %>% 
    group_by(Year, Month, Region) %>% 
-   reframe(DDate = DDate,
-            AveMeanTemp = round(mean(MeanTemp, na.rm = TRUE),1),
-            MaxMaxTemp = max(MaxTemp, na.rm = TRUE),
-            MinMinTemp = min(MinTemp, na.rm = TRUE)) %>% 
+   reframe(Date = Date,
+            AveMeanTemp = MeanTemp,
+            MaxMaxTemp = MaxTemp,
+            MinMinTemp = MinTemp) %>% 
    distinct() %>% 
    ungroup() %>% 
    filter(!is.na(AveMeanTemp))
 
-Temp_YM_allR <- weather %>% 
+Temp_YM_allR <- Temperature %>% 
    group_by(Year, Month) %>% 
-   reframe(DDate = DDate,
+   reframe(Date = Date,
             AveMeanTemp = round(mean(MeanTemp, na.rm = TRUE),1),
             MaxMaxTemp = max(MaxTemp, na.rm = TRUE),
             MinMinTemp = min(MinTemp, na.rm = TRUE)) %>% 
@@ -220,31 +271,95 @@ Temp_YM_allR <- weather %>%
    ungroup() %>% 
    filter(!is.na(AveMeanTemp))
 
-Rain_YM <- weather %>% 
+Rain_YM <- Rainfall %>% 
    group_by(Region, Year, Month) %>% 
-   reframe(DDate = DDate,
-            MeanRainfall = round(sum(Rainfall, na.rm = TRUE),1),
-            HighRainfall30 = sum(Rainfall30, na.rm = TRUE),
-            HighRainfall60 = sum(Rainfall60, na.rm = TRUE),
-            HighRainfall120 = sum(Rainfall120, na.rm = TRUE)) %>% 
+   reframe(Date = Date,
+            TotRainfall = round(sum(TotalRainfall, na.rm = TRUE),1),
+            HighRainfall30 = sum(TotalRainfall30, na.rm = TRUE),
+            HighRainfall60 = sum(TotalRainfall60, na.rm = TRUE),
+            HighRainfall120 = sum(TotalRainfall120, na.rm = TRUE)) %>% 
    distinct() %>%
    ungroup() %>% 
-   filter(!is.na(MeanRainfall))
+   filter(!is.na(TotRainfall))
 
-Rain_YM_allR <- weather %>% 
+Rain_YM_allR <- Rainfall %>% 
    group_by(Year, Month) %>% 
-   reframe(DDate = DDate,
-            MeanRainfall = sum(Rainfall, na.rm = TRUE),
-            HighRainfall30 = sum(Rainfall30, na.rm = TRUE),
-            HighRainfall60 = sum(Rainfall60, na.rm = TRUE),
-            HighRainfall120 = sum(Rainfall120, na.rm = TRUE)) %>% 
+   reframe(Date = Date,
+            TotRainfall = sum(TotalRainfall, na.rm = TRUE),
+            HighRainfall30 = sum(TotalRainfall30, na.rm = TRUE),
+            HighRainfall60 = sum(TotalRainfall60, na.rm = TRUE),
+            HighRainfall120 = sum(TotalRainfall120, na.rm = TRUE)) %>% 
    distinct() %>%
    ungroup() %>% 
-   filter(!is.na(MeanRainfall))
+   filter(!is.na(TotRainfall))
 
 ```
 
-# 3 UI Design
+# 4 EDA
+
+Let's take a look at how the temperature and rainfall changes over the past 40 years
+
+## 4.1 Time series of temperature
+
+```{r}
+gg <- ggplot(Temp_YM_allR, aes(x = Date, y = AveMeanTemp, 
+                         color = factor(Year))) +
+    geom_line(linewidth = 0.1) +
+    geom_point(aes(text = paste0("Year-Month:", Year, "-", Month,
+                                "<br>MeanTemp:", AveMeanTemp, "ºC"))) +
+    labs(x = "Year", y = "Mean temperature (ºC)", color = "Year",
+         title = "Trend of Mean Temperature from 1982 to 2023", 
+         subtitle = "Gentle trend line sloping upwards from 1994",
+         caption = "Data from Meteorological Service Singapore website") +
+    geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), 
+                se = FALSE, color = "black") +
+    theme_minimal() 
+
+ggplotly(gg, tooltip = "text") %>%
+    layout(title = list(text = 
+                        paste0(gg$labels$title, "<br>", "<sup>", 
+                               gg$labels$subtitle, "</sup>"),
+                        font = list(weight = "bold")),
+           showlegend = FALSE,
+    annotations = list(text = gg$labels$caption,
+                      xref = "paper", yref = "paper",
+                      x = 1000, y = 24,
+                      xanchor = "right", yanchor = "top",
+                      showarrow = FALSE)) 
+
+```
+
+## 4.2 Time series of Rainfall
+
+```{r}
+gg <- ggplot(Rain_YM_allR, aes(x = Date, y = TotRainfall, 
+                         color = factor(Year))) +
+    geom_line(linewidth = 0.1) +
+    geom_point(aes(text = paste0("Year-Month:", Year, "-", Month,
+                                "<br>Total Rain:", TotRainfall, "mm"))) +
+    labs(x = "Year", y = "Total Rainfall (mm)", color = "Year",
+         title = "Trend of Total Rainfall from 1982 to 2023", 
+         subtitle = "Increasing trend over the years",
+         caption = "Data from Meteorological Service Singapore website") +
+    geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), 
+                se = FALSE, color = "black") +
+    theme_minimal() 
+
+ggplotly(gg, tooltip = "text") %>%
+    layout(title = list(text = 
+                        paste0(gg$labels$title, "<br>", "<sup>", 
+                               gg$labels$subtitle, "</sup>"),
+                        font = list(weight = "bold")),
+           showlegend = FALSE,
+    annotations = list(text = gg$labels$caption,
+                      xref = "paper", yref = "paper",
+                      x = 1000, y = 24,
+                      xanchor = "right", yanchor = "top",
+                      showarrow = FALSE)) 
+
+```
+
+# 5 UI Design
 
 I will be working on the forecasting of temperature and rainfall (univariate) for the next few years.
 
@@ -262,13 +377,11 @@ I will be working on the forecasting of temperature and rainfall (univariate) fo
 
 Once the users click on the "Generate" button, the forecast plot will be shown on the right. Users can mouse over the data points to look at the forecast values.
 
-# 4 Prototype
+# 6 Prototype
 
-## 4.1 Create a function
+## 6.1 Create a function
 
 This function will take in all the five parameters that users set, generate the forecasting values and plot the graph using `plotly()`.
-
-For the Seasonal & Trend Decomposition method, there are 3 additional plots to show (trend, seasonal and residual).
 
 ```{r}
 GenerateTS <- function(variable_name, model_name, select_region,
@@ -289,17 +402,17 @@ GenerateTS <- function(variable_name, model_name, select_region,
       if (select_region != "All") {
           temp <- Rain_YM %>%
             filter(Region == select_region) %>% 
-            rename(Value = MeanRainfall) 
+            rename(Value = TotRainfall) 
       } else {
          temp <- Rain_YM_allR %>% 
-            rename(Value = MeanRainfall)
+            rename(Value = TotRainfall)
        }
       displayText = "Rainfall"
       displayUnit = "mm"
     }
    
-   minDate = min(temp$DDate)
-   maxDate = max(temp$DDate)
+   minDate = min(temp$Date)
+   maxDate = max(temp$Date)
    ts_data <- ts(temp$Value, 
                  start = c(year(minDate), month(minDate)), 
                  end = c(year(maxDate), month(maxDate)), frequency = 12)  
@@ -391,7 +504,7 @@ GenerateTS <- function(variable_name, model_name, select_region,
 As the forecast lower bound values may go negative, we would need to limit them to minimum 0 value as we do not have negative temperature or rainfall in Singapore.
 :::
 
-## 4.2 Test the function
+## 6.2 Test the function
 
 Let's test the function with various parameters:
 
@@ -422,47 +535,3 @@ GenerateTS("Rain", "STL", "All", 5, 90)
 :::
 
 Time series clustering \| Data Analysis (geomoer.github.io)
-
-Exploring other forecasting methods.
-
-```{r}
-#| eval: false
-library(prophet)
-
-# Create a dataframe for Prophet
-actual_df <- data.frame(ds = Temp_YM_allR$DDate, y = Temp_YM_allR$AveMeanTemp)
-
-# Fit the Prophet model
-model <- prophet(interval.width = 0.95)
-model <- fit.prophet(model, actual_df)
-
-# Make future predictions
-future <- make_future_dataframe(model, periods = 10*12, freq = 'months')
-forecast_values <- predict(model, future)
-
-str(forecast_values)
-    forecast_df <- data.frame(
-  Date = forecast_values$ds,  # Timestamps
-  Forecast = forecast_values$yhat,  # Forecasted values
-  LowerV = forecast_values$yhat_lower,  # Lower bounds of forecasts
-  UpperV = forecast_values$yhat_upper  # Upper bounds of forecasts
-)
-
-# Optionally, you can convert 'Date' column to Date type
-forecast_df$Date <- as.Date(forecast_df$Date)    
-    forecast_df$YearMonth <- format(as.Date(forecast_df$Date, 
-                                            origin = minDate), "%Y-%m")
-    
-    #cannot go negative
-    forecast_df$LowerV <- pmax(forecast_df$LowerV, 0)
-
-  
-plot_ly() %>%
-  add_lines(data = forecast_df, x = ~Date, y = ~Forecast, name = 'Forecast', line = list(color = 'blue')) %>%
-  add_lines(data = forecast_df, x = ~Date, y = ~LowerV, name = 'Lower Bound', line = list(color = 'red', dash = 'dot')) %>%
-  add_lines(data = forecast_df, x = ~Date, y = ~UpperV, name = 'Upper Bound', line = list(color = 'green', dash = 'dot')) %>%
-  add_trace(data = actual_df, x = ~Date, y = ~y, name = 'Actual', type = 'scatter', mode = 'lines', line = list(color = 'black')) %>%
-  layout(title = 'Temperature Forecast',
-         xaxis = list(title = 'Date'),
-         yaxis = list(title = 'Temperature'))
-```
