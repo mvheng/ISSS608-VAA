@@ -71,7 +71,7 @@ The code below uses `p_load()` of the Pacman package to check if all the require
 
 ```{r}
 pacman::p_load(readr, tidyverse, plotly, ggplot2, 
-               zoo, forecast, janitor, fs, visdat)
+               zoo, forecast, janitor, fs, visdat, fable, tsibble, tseries)
 ```
 
 ## 3.2 Importing data
@@ -311,8 +311,7 @@ gg <- ggplot(Temp_YM_allR, aes(x = Date, y = AveMeanTemp,
          title = "Trend of Mean Temperature from 1982 to 2023", 
          subtitle = "Gentle trend line sloping upwards from 1994",
          caption = "Data from Meteorological Service Singapore website") +
-    geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), 
-                se = FALSE, color = "black") +
+    geom_smooth(method = "lm", color = "black") +
     theme_minimal() 
 
 ggplotly(gg, tooltip = "text") %>%
@@ -328,6 +327,30 @@ ggplotly(gg, tooltip = "text") %>%
                       showarrow = FALSE)) 
 
 ```
+
+::: callout-note
+Note that there is an increasing trend in the temperature over the years.
+:::
+
+Create time series Object
+
+```{r}
+Temp <- Temp_YM %>%     
+   group_by(Date) %>%     
+   summarise(MeanTemp = mean(AveMeanTemp)) 
+temp_ts <- tsibble(date = Temp$Date,       
+                   temperature = Temp$MeanTemp) 
+```
+
+Check if temperature time series is stationary using Augmented Dickey-Fuller Test
+
+```{r}
+adf.test(temp_ts$temperature)
+```
+
+::: callout-note
+The above test shows that our temperature time-series object is stationary (reject Null hypothesis as p-value = 0.01. This signifies that the statistical properties of time series, such as mean, variance, and covariance, remain constant over time, which is the fundamental assumption for many time series modeling techniques.It simplifies the complex dynamics within the data, making it more amenable to analysis, modeling, and forecasting.
+:::
 
 ## 4.2 Time series of Rainfall
 
@@ -341,8 +364,7 @@ gg <- ggplot(Rain_YM_allR, aes(x = Date, y = TotRainfall,
          title = "Trend of Total Rainfall from 1982 to 2023", 
          subtitle = "Increasing trend over the years",
          caption = "Data from Meteorological Service Singapore website") +
-    geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), 
-                se = FALSE, color = "black") +
+    geom_smooth(method = "lm", color = "black") +
     theme_minimal() 
 
 ggplotly(gg, tooltip = "text") %>%
@@ -358,6 +380,30 @@ ggplotly(gg, tooltip = "text") %>%
                       showarrow = FALSE)) 
 
 ```
+
+::: callout-note
+Note that there is an increasing trend in the total rainfall over the years.
+:::
+
+Create time series Object
+
+```{r}
+Rain <- Rain_YM %>%   
+   group_by(Date) %>%       
+   summarise(TotalRain = sum(TotRainfall))
+Rain_ts <- tsibble(date = Rain$Date,    
+                   Rain = Rain$TotalRain) 
+```
+
+Check if temperature time series is stationary using Augmented Dickey-Fuller Test
+
+```{r}
+adf.test(Rain_ts$Rain)
+```
+
+::: callout-note
+The above test shows that our rainfall time-series object is stationary (reject Null hypothesis as p-value = 0.01.
+:::
 
 # 5 UI Design
 
@@ -533,5 +579,3 @@ Forecast **rainfall** using the **STL** method for **all** region data over the 
 GenerateTS("Rain", "STL", "All", 5, 90)
 ```
 :::
-
-Time series clustering \| Data Analysis (geomoer.github.io)
