@@ -65,6 +65,8 @@ website:
             href: "In-class_Ex/In-class_Ex07/In-class_Ex07a.html"
           - text: "7b. Geospatial maps in R"
             href: "In-class_Ex/In-class_Ex07/In-class_Ex07b.html"
+          - text: "9. Tableau - Bullet and Sparkline"
+            href: "In-class_Ex/In-class_Ex09/In-class_Ex09.html"
       - text: "Take-home Exercises"
         menu: 
           - text: "1. PISA Singapore 2022"
