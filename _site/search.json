@@ -1454,5 +1454,12 @@
     "title": "Take-home Exercise 3: Be Weatherwise Or Otherwise",
     "section": "4.2 One-way Anova test on daily mean temperatures by year",
     "text": "4.2 One-way Anova test on daily mean temperatures by year\n\n\nShow the code\nggbetweenstats(data = weather_data, x = Year, y = MeanTemp,\n              type = \"p\",\n              mean.ci = TRUE, \n              pairwise.comparisons = TRUE, \n              pairwise.display = \"s\", #show significant pair only\n              p.adjust.method = \"fdr\",\n              messages = FALSE) +\n  labs(y = \"Daily mean temperatures\",\n       title = \"One-way Anova Test on Daily Mean Temperatures by Year\")\n\n\n\n\n\n\n\n\n\n\n\nInterpretation of results\n\n\n\nFrom the above Anova test, we can conclude that the annual mean temperatures are significantly different in 2023 when compared with the years 1983, 1993, 2003, and 2013. The annual mean temperatures are significantly different for the years 1993 and 2003 too."
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex09/In-class_Ex09.html",
+    "href": "In-class_Ex/In-class_Ex09/In-class_Ex09.html",
+    "title": "In Class Exercise 09 - Tableau Bullet Graph and Sparkline",
+    "section": "",
+    "text": "In this exercise, we will explore how to create bullet graphs and sparkline charts in Tableau.\nBullet Graph\n\nSparkline Chart\nThere is no ready-template for sparkline chart. However, we can use line chart and create a few calculated fields to make sparkline chart.\n1st calculated field to determine the max and min point of the sales:\nIF WINDOW_MAX(sum([Sales])) = SUM([Sales]) OR WINDOW_MIN(SUM([Sales])) = SUM([Sales])\nTHEN sum([Sales]) END\n2nd calculated field to state the point is max or min (so that we can assign different colours)\nIF SUM([Sales]) = WINDOW_MAX(SUM([Sales])) THEN ‘High’\nELSEIF SUM([Sales]) = WINDOW_MIN(SUM([Sales])) THEN ‘Low’ END\n3rd calculated field to label the min and max sales\nIF SUM([Sales]) = WINDOW_MAX(SUM([Sales])) OR SUM([Sales]) = WINDOW_MIN(SUM([Sales]))\nTHEN SUM([Sales]) END\n\nThe dashboard is available at public tableau server."
   }
 ]

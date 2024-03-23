@@ -61,7 +61,7 @@ As there are 42 years of monthly data to download for each station, my team has 
 The code below uses `p_load()` of the Pacman package to check if all the required packages are installed on the laptop. If they are, then they will be launched into the R environment.
 
 |                                    Package                                    | Description                                                                                                  |
-|:----------------------------:|------------------------------------------|
+|:-----------------------------------------------------------------------------:|--------------------------------------------------------------------------------------------------------------|
 |                  [**tidyverse**](https://www.tidyverse.org/)                  | A collection of core packages designed for data science used extensively for data preparation and wrangling. |
 | [**lubridate**](https://lubridate.tidyverse.org/reference/make_datetime.html) | For manipulating date-times.                                                                                 |
 |          [**janitor**](https://sfirke.github.io/janitor/reference/)           | For quick formatting of data frame columns.                                                                  |

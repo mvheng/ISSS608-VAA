@@ -1,0 +1,45 @@
+---
+title: "In Class Exercise 09 - Tableau Bullet Graph and Sparkline"
+author: "Vanessa Heng"
+date: "January 27, 2024"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  #freeze: true
+  warning: false
+  message: false
+editor: visual
+---
+
+In this exercise, we will explore how to create bullet graphs and sparkline charts in Tableau.
+
+**Bullet Graph**
+
+![](images/clipboard-4124983791.png)
+
+**Sparkline Chart**
+
+There is no ready-template for sparkline chart. However, we can use line chart and create a few calculated fields to make sparkline chart.
+
+1st calculated field to determine the max and min point of the sales:
+
+IF WINDOW_MAX(sum(\[Sales\])) = SUM(\[Sales\]) OR WINDOW_MIN(SUM(\[Sales\])) = SUM(\[Sales\])
+
+THEN sum(\[Sales\]) END
+
+2nd calculated field to state the point is max or min (so that we can assign different colours)
+
+IF SUM(\[Sales\]) = WINDOW_MAX(SUM(\[Sales\])) THEN 'High'
+
+ELSEIF SUM(\[Sales\]) = WINDOW_MIN(SUM(\[Sales\])) THEN 'Low' END
+
+3rd calculated field to label the min and max sales
+
+IF SUM(\[Sales\]) = WINDOW_MAX(SUM(\[Sales\])) OR SUM(\[Sales\]) = WINDOW_MIN(SUM(\[Sales\]))
+
+THEN SUM(\[Sales\]) END
+
+![](images/clipboard-2398259953.png)
+
+The dashboard is available at [public tableau server](https://public.tableau.com/app/profile/vanessa.heng/viz/BulletandSparklinecharts/Dashboard1?publish=yes).
