@@ -4,6 +4,16 @@ author: "Vanessa Heng"
 date: "January 9, 2024"
 ---
 
+```{=html}
+<style>
+  body {
+  background-image: url("https://64.media.tumblr.com/tumblr_ltlls9mRKu1qgoibeo1_1280.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+</style>
+```
 Welcome to my 10-week **ISSS608 Visual Analytics and Applications** journey.
 
 On this website, you will find my coursework prepared for this course.
@@ -11,5 +21,3 @@ On this website, you will find my coursework prepared for this course.
 The road is tough but the following quote motivates me!
 
 ***“Everybody, try laughing. Then whatever scares you will go away! ” - Tatsuo Kusakabe***
-
-![](images/totoro.jpg){fig-align="center" width="200"}
