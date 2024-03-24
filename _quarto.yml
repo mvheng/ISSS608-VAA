@@ -77,6 +77,8 @@ website:
             href: "Take-home_Ex/Take-home_Ex03/Take-home_Ex03.html"
           - text: "4. Prototyping Modules for Shiny Application"
             href: "Take-home_Ex/Take-home_Ex04/Take-home_Ex04.html"
+      - text: "Project"
+        href: "https://merrycheesecake-isss608.netlify.app/"
 format:
   html:
     theme: pulse
