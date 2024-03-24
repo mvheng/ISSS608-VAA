@@ -280,7 +280,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 23, 2024</p>
+      <p class="date-modified">March 24, 2024</p>
     </div>
   </div>
     
@@ -290,10 +290,8 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <p>In this exercise, we will explore how to create bullet graphs and sparkline charts in Tableau.</p>
-<p><strong>Bullet Graph</strong></p>
-<p><img src="images/clipboard-4124983791.png" class="img-fluid"></p>
-<p><strong>Sparkline Chart</strong></p>
-<p>There is no ready-template for sparkline chart. However, we can use line chart and create a few calculated fields to make sparkline chart.</p>
+<p><strong>Bullet Graph</strong><img src="../..\images/clipboard-4124983791.png" class="img-fluid"><strong>Sparkline Chart</strong></p>
+<p>There is no ready template for the sparkline chart. However, we can use a line chart and create a few calculated fields to make a sparkline chart.</p>
 <p>1st calculated field to determine the max and min point of the sales:</p>
 <p>IF WINDOW_MAX(sum([Sales])) = SUM([Sales]) OR WINDOW_MIN(SUM([Sales])) = SUM([Sales])</p>
 <p>THEN sum([Sales]) END</p>

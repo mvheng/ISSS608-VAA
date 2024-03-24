@@ -14,13 +14,9 @@ editor: visual
 
 In this exercise, we will explore how to create bullet graphs and sparkline charts in Tableau.
 
-**Bullet Graph**
+**Bullet Graph**![](/images/clipboard-4124983791.png)**Sparkline Chart**
 
-![](images/clipboard-4124983791.png)
-
-**Sparkline Chart**
-
-There is no ready-template for sparkline chart. However, we can use line chart and create a few calculated fields to make sparkline chart.
+There is no ready template for the sparkline chart. However, we can use a line chart and create a few calculated fields to make a sparkline chart.
 
 1st calculated field to determine the max and min point of the sales:
 
